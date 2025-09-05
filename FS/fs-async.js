@@ -18,7 +18,7 @@ catch(er){
 
     }
 }
-createfolder();
+//createfolder();
 
 async function writef() {
 try{
@@ -30,4 +30,15 @@ catch(er){
 
     }
 }
-writef();
+//writef();
+
+async function del() {
+try{
+    await fs.unlink(file)
+}
+catch(er){
+     console.log("There's an error in it",er);
+
+    }
+}
+del();
