@@ -82,3 +82,23 @@ let network = () =>{
 }
 // network();
 
+let processinfo = () =>{
+    let pid = process.pid;
+    let title = process.title;
+    let nodeversion = process.version;
+    let platform = process.platform;
+    let cwd = process.cwd();
+    let memoryUsage ={
+        rss:  formatBytes(process.memoryUsage().rss, decimal),
+        heapTotal: formatBytes(process.memoryUsage().heapTotal, decimal),
+        heapUsed: formatBytes(process.memoryUsage().heapUsed, decimal),
+        external: formatBytes(process.memoryUsage().external, decimal),  
+    }
+    
+    console.log({
+        pid,title,nodeversion,platform,cwd,memoryUsage
+    });
+}
+processinfo();
+
+//creating the http server
