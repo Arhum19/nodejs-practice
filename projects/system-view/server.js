@@ -7,7 +7,7 @@ let decimal = 2;
 function formatBytes(bytes, decimal) {
   if (bytes === 0) return 0;
   const k = 1024;
-  const sizes = ["bytes", "kb", "mb", " gb", "tb", "pb"];
+  const sizes = ["bytes", "KB", "MB", "GB", "TB", "PB"];
   let i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(decimal)) + " " + sizes[i];
 }
@@ -26,7 +26,7 @@ function formatUptime(seconds) {
 
 
 // get cpu info
-function getcpu() {
+let getcpu = () => {
   let model =  os.cpus()[0].model 
   let core =  os.cpus().length
   let architecture = os.arch();
@@ -36,4 +36,49 @@ function getcpu() {
     model,core,architecture,load_Average
   });
 }
-getcpu();
+
+//getcpu();
+
+// memort info
+let getmem = () => {
+  let Total_Memory =  os.totalmem(); 
+  let Remaining_Memory =  os.freemem();
+  let tot = Total_Memory - Remaining_Memory;
+  let usage = ((tot/Total_Memory*100).toFixed(decimal)+"%") 
+
+  console.log({
+    Total_Memory: formatBytes(Total_Memory, decimal),
+    Remaining_Memory: formatBytes(Remaining_Memory, decimal),
+    Usage: usage
+  });
+}
+//getmem();
+
+// os info
+let getos = () => {
+  let platform =  os.platform(); 
+  let host =  os.hostname();
+  let type = os.type();
+  let release  = os.release();
+  let up = os.uptime();
+
+  console.log({
+    platform,host,type,release,Up_Time:formatUptime(up)
+  });
+}
+//getos();
+
+let uinfo = () =>{
+    let user = os.userInfo()
+    console.log(user);
+    
+}
+//uinfo();
+
+let network = () =>{
+    let net = os.networkInterfaces()
+    console.log(net);
+    
+}
+// network();
+
