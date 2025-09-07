@@ -2,6 +2,8 @@ const os = require("os");
 const url = require("url");
 const http = require("http");
 const process = require("process");
+const { runInContext } = require("vm");
+const { resolveTlsa } = require("dns");
 let decimal = 2;
 //format bytes into readable format
 function formatBytes(bytes, decimal) {
@@ -31,12 +33,12 @@ let getcpu = () => {
   let architecture = os.arch();
   let load_Average = os.loadavg();
 
-  console.log({
+  return {
     model,
     core,
     architecture,
     load_Average,
-  });
+  };
 };
 
 //getcpu();
@@ -48,11 +50,11 @@ let getmem = () => {
   let tot = Total_Memory - Remaining_Memory;
   let usage = ((tot / Total_Memory) * 100).toFixed(decimal) + "%";
 
-  console.log({
-    Total_Memory: formatBytes(Total_Memory, decimal),
+  return {
+    Total_Memory,
     Remaining_Memory: formatBytes(Remaining_Memory, decimal),
-    Usage: usage,
-  });
+    usage: usage
+  }
 };
 //getmem();
 
@@ -64,25 +66,30 @@ let getos = () => {
   let release = os.release();
   let up = os.uptime();
 
-  console.log({
+  return{
     platform,
     host,
     type,
     release,
     Up_Time: formatUptime(up),
-  });
+  }
+    
 };
 //getos();
 
 let uinfo = () => {
   let user = os.userInfo();
-  console.log(user);
+  return{
+    user,
+  }
 };
 //uinfo();
 
 let network = () => {
   let net = os.networkInterfaces();
-  console.log(net);
+  return{
+    net,
+  }
 };
 // network();
 
@@ -98,29 +105,64 @@ let processinfo = () => {
     heapUsed: formatBytes(process.memoryUsage().heapUsed, decimal),
     external: formatBytes(process.memoryUsage().external, decimal),
   };
-  Node_Env: process.env.NODE_ENV || "server not set";
+  let node = process.env.NODE_ENV || "server not set";
 
-  console.log({
+  return{
     pid,
     title,
     nodeversion,
     platform,
     cwd,
     memoryUsage,
-  });
+    node,
+  }
+    
 };
-processinfo();
+//processinfo();
 
-//creating the http server for the application
 let r = {
-  "/": {
-    name: "Simple Json server!!",
-    description: "Acess system information via /system",
+  "/": () => ({
+    name: "Simple JSON server!!",
+    description: "Access system information via routes",
     routes: ["/memory", "/cpu", "/os", "/user", "/process", "/network"],
-  },
+  }),
+  "/memory": getmem,
+  "/cpu": getcpu,
+  "/os": getos,
+  "/network": network,
+  "/user": uinfo,
+  "/process": processinfo,
 };
 
-const server = http.createServer( (req,res) =>{
-  res.setHeader("Content-Type", "json/application");
-  
-})
+const server = http.createServer((req, res) => {
+  const urll = url.parse(req.url);
+
+  res.setHeader("Content-Type", "application/json");
+
+  if (req.method === "GET") {
+    if (r[urll.pathname]) {
+      res.statusCode = 200;
+
+      // run the function at request time
+      let data = r[urll.pathname]();
+      const response =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+
+      //res.end(data ? response : JSON.stringify(r["/"](), null, 2));
+      res.end(response)  
+    } else {
+      res.statusCode = 404;
+      res.end(JSON.stringify({ error: "Error page not found" }));
+    }
+  } else {
+    res.statusCode = 405;
+    res.end(JSON.stringify({ error: "Method not allowed!" }));
+  }
+});
+
+//start the server
+const port = 5000;
+server.listen(port, () => {
+  console.log(`Tap to open the server: http://localhost:${port}`);
+  console.log("Press ctrl+c to end the server");
+});
