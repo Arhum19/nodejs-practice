@@ -101,4 +101,4 @@ let processinfo = () =>{
 }
 processinfo();
 
-//creating the http server
+//creating the http server for the application
