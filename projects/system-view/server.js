@@ -2,9 +2,13 @@ const os = require("os");
 const url = require("url");
 const http = require("http");
 const process = require("process");
-const { runInContext } = require("vm");
-const { resolveTlsa } = require("dns");
 let decimal = 2;
+let fs = require("fs").promises;
+let path = require("path");
+let folder = path.join(__dirname, "user");
+let file = path.join(folder, "users.json");
+
+
 //format bytes into readable format
 function formatBytes(bytes, decimal) {
   if (bytes === 0) return 0;
@@ -166,3 +170,25 @@ server.listen(port, () => {
   console.log(`Tap to open the server: http://localhost:${port}`);
   console.log("Press ctrl+c to end the server");
 });
+
+// create folder and file to store user data
+async function createfolder() {
+  try {
+    await fs.mkdir(folder, { recursive: true });
+    console.log("Folder has been created");
+  } catch (er) {
+    console.log("There's an error in it", er);
+  }
+}
+createfolder();
+//createfile
+async function writef() {
+  try {
+    let data = uinfo();
+    await fs.writeFile(file, JSON.stringify(data, null, 2));
+    console.log("File has been created");
+  } catch (er) {
+    console.log("There's an error in it", er);
+  }
+}
+writef();
