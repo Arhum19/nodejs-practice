@@ -2,17 +2,33 @@
   {
     "name": "arhum",
     "email": "arhumnoor10@gmail.com",
-    "password": "asd",
+    "password": "qwerty",
     "gender": "male",
     "termsAccepted": true,
-    "comments": "asd"
+    "comments": "hi"
   },
   {
-    "name": "ar",
+    "name": "abeera ",
     "email": "sp23bscs0040@maju.edu.pk",
-    "password": "ads",
+    "password": "123145",
+    "gender": "female",
+    "termsAccepted": true,
+    "comments": "bye"
+  },
+  {
+    "name": "zaeem",
+    "email": "zaem@12gmail.com",
+    "password": "asdsad",
     "gender": "male",
     "termsAccepted": true,
-    "comments": "ads"
+    "comments": "owais\n"
+  },
+  {
+    "name": "naviyan",
+    "email": "naviyanshahzadalt@gmail.com",
+    "password": "ooiiw",
+    "gender": "male",
+    "termsAccepted": true,
+    "comments": "pakro"
   }
 ]

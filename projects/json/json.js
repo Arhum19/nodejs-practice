@@ -1,0 +1,60 @@
+const fs = require("fs").promises;
+const path = require("path");
+const http = require("http");
+const url = require("url");
+const { log } = require("console");
+const { prototype } = require("events");
+
+let folder = path.join(__dirname, "../form-for-json-data/server/data");
+let file = path.join(folder, "info.json");
+
+async function readUsers() {
+  try {
+    let data = await fs.readFile(file, "utf-8");
+    let users = JSON.parse(data); // convert JSON string → object/array
+    console.log("Users:", users);
+    return users;
+  } catch (err) {
+    console.error("Error reading file:", err);
+    return [];
+  }
+}
+
+//readUsers();
+
+let r ={
+  "/": async () => ({
+    name: "This is the home page press /user to get the users",
+    description: "Access system information via routes",
+    routes: ["/users"],
+  }),
+  "/user":readUsers,
+};
+//creating server
+const server = http.createServer(async (req, res) => {
+  const urll = url.parse(req.url);
+  res.setHeader("Content-type", "application/json");
+
+  if (req.method === "GET") {
+    if (r[urll.pathname]) {
+      req.statusCode = 200;
+      let data = await r[urll.pathname]();
+      const response =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+      res.end(response);
+    } else {
+      req.statusCode = 404;
+      res.end(JSON.stringify({ error: "Error: page not found" }));
+    }
+  } else {
+    req.statusCode = 405;
+    res.end(JSON.stringify({ error: "Error: Method not allowed" }));
+  }
+});
+
+const port = 5000;
+//starting the server
+server.listen(port,() => {
+  console.log(`Tap to open the server http://localhost:${port}`);
+  console.log("Ctrl+c to shut down the server");
+});
