@@ -9,7 +9,7 @@ let file = path.join(folder, "info.json");
 async function readUsers() {
   try {
     let data = await fs.readFile(file, "utf-8");
-    let users = JSON.parse(data); // convert JSON string → object/array
+    let users = JSON.parse(data); 
     // console.log("Users:", users);
     return users;
   } catch (err) {
