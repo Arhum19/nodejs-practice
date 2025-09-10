@@ -25,6 +25,7 @@ app.post("/save", async (req, res) => {
       users = JSON.parse(data); // existing users
     } catch (err) {
       // file may not exist yet
+      if (err.code !== "ENOENT") throw err;
     }
 
     users.push(newUser); // add new user
