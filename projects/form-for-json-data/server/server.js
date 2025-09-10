@@ -24,7 +24,6 @@ app.post("/save", async (req, res) => {
       let data = await fs.readFile(file, "utf-8");
       users = JSON.parse(data); // existing users
     } catch (err) {
-      // file may not exist yet
       if (err.code !== "ENOENT") throw err;
     }
 
